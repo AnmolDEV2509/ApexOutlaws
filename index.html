@@ -10,22 +10,28 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="bg"></div>
+<div class="ambient"><img id="ambientImg" src="slides_full/slide-01.jpg" alt=""></div>
+<div class="grain"></div>
 <header class="topbar">
-  <div class="brand"><span class="brand-mark">MS</span><span>MS Creation</span></div>
-  <div class="counter" id="counter">1 / 28</div>
-  <button class="icon-btn" id="fullscreen" aria-label="Fullscreen">⛶</button>
+  <div class="brand"><span class="mark">MS</span><div><strong>MS CREATION</strong><small>COMMISSION WORK</small></div></div>
+  <div class="top-actions"><span class="live-dot"></span><span id="sectionLabel">ART</span><button id="gridBtn" class="round" title="Slide overview">⌘</button><button id="fullscreen" class="round" title="Fullscreen">⛶</button></div>
 </header>
-<main id="viewer" tabindex="0">
-  <div class="stage"><canvas id="pdfCanvas"></canvas><div class="loader" id="loader">Loading presentation…</div></div>
+<aside class="rail" id="rail"></aside>
+<main class="experience" id="experience">
+  <div class="copy">
+    <div class="eyebrow"><span id="slideNo">01</span><i></i><span id="miniLabel">ART</span></div>
+    <h1 id="slideTitle">What Is Art??</h1>
+    <p id="slideDesc">A visual journey through handmade commission work, creativity, process and possibilities.</p>
+    <div class="actions"><button id="prev" class="pill ghost">← <span>Previous</span></button><button id="next" class="pill dark"><span>Next</span> →</button></div>
+  </div>
+  <div class="visual-wrap">
+    <div class="visual-shadow"></div>
+    <div class="slide-card" id="slideCard"><img id="slideImg" src="slides_full/slide-01.jpg" alt="Presentation slide"></div>
+    <div class="caption"><span id="captionText">Commission Work</span><span id="counter">01 / 28</span></div>
+  </div>
 </main>
-<div class="controls">
-  <button id="prev" class="nav-btn" aria-label="Previous slide">‹</button>
-  <div class="progress"><div id="progressBar"></div></div>
-  <button id="next" class="nav-btn" aria-label="Next slide">›</button>
-</div>
-<div class="hint">← → / Space to navigate · Swipe on mobile · F to fullscreen</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-<script type="module" src="app.js"></script>
+<div class="bottom"><div class="progress"><span id="progress"></span></div><div class="keys">← → <b>or</b> swipe <b>·</b> <span>F</span> fullscreen</div></div>
+<div class="overlay" id="overlay"><div class="overview"><div class="overview-head"><div><small>OVERVIEW</small><h2>Explore the presentation</h2></div><button id="closeGrid" class="round">×</button></div><div class="grid" id="grid"></div></div></div>
+<script src="app.js"></script>
 </body>
 </html>
