@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MS Creation — Commission Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"></div>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">MS</span><span>MS Creation</span></div>
+  <div class="counter" id="counter">1 / 28</div>
+  <button class="icon-btn" id="fullscreen" aria-label="Fullscreen">⛶</button>
+</header>
+<main id="viewer" tabindex="0">
+  <div class="stage"><canvas id="pdfCanvas"></canvas><div class="loader" id="loader">Loading presentation…</div></div>
+</main>
+<div class="controls">
+  <button id="prev" class="nav-btn" aria-label="Previous slide">‹</button>
+  <div class="progress"><div id="progressBar"></div></div>
+  <button id="next" class="nav-btn" aria-label="Next slide">›</button>
+</div>
+<div class="hint">← → / Space to navigate · Swipe on mobile · F to fullscreen</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
