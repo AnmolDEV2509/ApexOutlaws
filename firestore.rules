@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && request.auth.uid == "0u90kcoJ5Wfx1Prvoa5FKv8FZEF2"; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && request.resource.data.currency.AC == 0;
+      allow update: if isAdmin() || (isOwner(userId) && request.resource.data.diff(resource.data).affectedKeys().hasNone(['currency','status','role','isAdmin','admin']));
+      allow delete: if isAdmin();
+
+      match /activity/{activityId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) || isAdmin();
+        allow update, delete: if isAdmin();
+      }
+      match /friends/{friendUid} {
+        allow read: if signedIn();
+        allow create: if signedIn() && (request.auth.uid == userId || request.auth.uid == friendUid) && request.resource.data.uid == friendUid && existsAfter(/databases/$(database)/documents/friendRequests/$(userId + '_' + friendUid)) && getAfter(/databases/$(database)/documents/friendRequests/$(userId + '_' + friendUid)).data.status == 'accepted' || signedIn() && (request.auth.uid == userId || request.auth.uid == friendUid) && request.resource.data.uid == friendUid && existsAfter(/databases/$(database)/documents/friendRequests/$(friendUid + '_' + userId)) && getAfter(/databases/$(database)/documents/friendRequests/$(friendUid + '_' + userId)).data.status == 'accepted';
+        allow delete: if signedIn() && (request.auth.uid == userId || request.auth.uid == friendUid);
+      }
+      match /following/{targetUid} {
+        allow read: if signedIn();
+        allow create: if signedIn() && request.auth.uid == userId && targetUid != userId && existsAfter(/databases/$(database)/documents/users/$(targetUid)/followers/$(userId));
+        allow delete: if signedIn() && request.auth.uid == userId && !existsAfter(/databases/$(database)/documents/users/$(targetUid)/followers/$(userId));
+      }
+      match /followers/{followerUid} {
+        allow read: if signedIn();
+        allow create: if signedIn() && request.auth.uid == followerUid && followerUid != userId && existsAfter(/databases/$(database)/documents/users/$(followerUid)/following/$(userId));
+        allow delete: if signedIn() && request.auth.uid == followerUid && !existsAfter(/databases/$(database)/documents/users/$(followerUid)/following/$(userId));
+      }
+    }
+
+    match /publicProfiles/{userId} {
+      allow read: if signedIn();
+      allow create, update: if isOwner(userId) && request.resource.data.keys().hasOnly(['uid','username','usernameLower','createdAt']) && request.resource.data.uid == userId && request.resource.data.username is string && request.resource.data.usernameLower is string;
+      allow delete: if isOwner(userId);
+    }
+
+    match /friendRequests/{requestId} {
+      allow read: if signedIn() && (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.fromUid == request.auth.uid && request.resource.data.toUid is string && request.resource.data.toUid != request.auth.uid && request.resource.data.status == 'pending' && requestId == request.auth.uid + '_' + request.resource.data.toUid;
+      allow update: if signedIn() && ((resource.data.toUid == request.auth.uid && resource.data.status == 'pending' && request.resource.data.status in ['accepted','rejected'] && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','acceptedAt'])) || (resource.data.fromUid == request.auth.uid && resource.data.status == 'rejected' && request.resource.data.status == 'pending' && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','createdAt'])));
+      allow delete: if signedIn() && resource.data.fromUid == request.auth.uid && resource.data.status == 'pending';
+    }
+
+    match /news/{newsId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    match /servers/{serverId} { allow read, write: if false; }
+    match /rooms/{roomId} { allow read, write: if false; }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
